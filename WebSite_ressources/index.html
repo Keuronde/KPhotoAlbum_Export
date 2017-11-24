@@ -78,10 +78,10 @@ function reset()
 function computeCategory()
 {
   var CategoryAndValue={"categories":[]};
-  var Category= getTagFamilies(photosDatabase);
+  var Category= tg_getTagFamilies(photosDatabase);
   var i,j,k;
   for (i=0; i<Category.length; i++){
-    familyTags_ref = getTags(photosDatabase, Category[i])
+    familyTags_ref = tg_getTags(photosDatabase, Category[i])
     familyTags=[];
     for (k=0; k<familyTags_ref.length; k++){
       // do not display the value already selected
@@ -104,7 +104,7 @@ function computeCategory()
 
 function refresh(){
   var CategoryAndValue = computeCategory();
-  selectedPhotos = getPhotos(photosDatabase,criteria)
+  selectedPhotos = tg_getPhotos(photosDatabase,criteria)
 
   // Current search
   //Grab the inline template

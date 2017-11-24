@@ -25,7 +25,7 @@ function intersect_photos(a, b) {
     });
 }
 
-function getTags(photosDatabase, tagFamily){
+function tg_getTags(photosDatabase, tagFamily){
   /* This function return a list of tags
   Inputs:
   * photosDatabase: database
@@ -42,7 +42,7 @@ function getTags(photosDatabase, tagFamily){
   return myTags;
 }
 
-function getTagFamilies(photosDatabase){
+function tg_getTagFamilies(photosDatabase){
   /* this function return the list of tag family
   Inputs:
   * photosDatabase: database */
@@ -54,7 +54,7 @@ function getTagFamilies(photosDatabase){
   return myTagFamilies;
 }
 
-function getPhotos(photosDatabase,criteria){
+function tg_getPhotos(photosDatabase,criteria){
   /* Return the list of photos corresponding to all given criteria
   Inputs:
   * photosDatabase: database
