@@ -15,9 +15,11 @@
 <script id="search_tpl" type="x-tmpl-mustache">
     <p style="display:inline-block;">Recherche :</p>
     <!-- BEGIN recherche -->
-	{{#search}}
-    <button type="button" category="{{category}}" value="{{value}}" onclick="delCriteria(this)">{{category}} : <span style="value">{{value}}</button>
-	{{/search}}
+	{{#currentSearch}}
+    {{#values}}
+    <button type="button" category="{{category}}" value="{{.}}" onclick="delCriteria(this)">{{category}} : <span style="value">{{.}}</button>
+    {{/values}}
+	{{/currentSearch}}
     <!-- END recherche -->
     <button style:"float:left" onclick="reset()">
 </script>
@@ -68,7 +70,7 @@ function delCriteria(theButton){
 }
 function reset()
 {
-  criteria=[];
+  tg_reset();
   refresh();
 }
 
@@ -84,8 +86,10 @@ function computeCategory()
     for (k=0; k<familyTags_ref.length; k++){
       // do not display the value already selected
       var toAdd=true;
-      for (j=0; j<criteria.length; j++){
-        if((Category[i] == criteria[j].category) && (familyTags_ref[k] == criteria[j].value)){
+      for (j=0; j<criteria.currentSearch.length; j++){
+        // TODO : loop on the criteria.currentSearch[j].value[0]
+        // TODO : make a function tg_isInCriteria({categori, value})
+        if((Category[i] == criteria.currentSearch[j].category) && (familyTags_ref[k] == criteria.currentSearch[j].values[0])){
           toAdd=false;
         }
       }
@@ -106,13 +110,14 @@ function refresh(){
 
   // Current search
   //Grab the inline template
-  if(criteria.length > 0){
+  // TODO : make a function tg_criteriaIsEmpty
+  if(criteria.currentSearch.length > 0){
     var mytemplate = document.getElementById('search_tpl')
     var template = mytemplate.innerHTML;
     //Parse it (optional, only necessary if template is to be used again)
     Mustache.parse(template);
     //Render the data into the template
-    var rendered = Mustache.render(template, {"search":criteria});
+    var rendered = Mustache.render(template, criteria);
     //Overwrite the contents of #target with the rendered HTML
     document.getElementById('search').innerHTML = rendered;
   }else{

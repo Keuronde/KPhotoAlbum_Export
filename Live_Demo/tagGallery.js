@@ -1,4 +1,20 @@
-var criteria = [];
+var criteria = {"currentSearch":[]};
+/* Should look like this
+"currentSearch":
+  [
+    {
+      "category":categorie1,
+      "values":[value1, value2],
+      "boolOp":AND
+    },
+    {
+      "categorie":categorie2,
+      "values":[value1, value2],
+      "boolOp":AND
+    }
+
+
+*/
 
 // Function to get unique value in a array
 function unique(a) {
@@ -24,12 +40,16 @@ function intersect_photos(a, b) {
         return arrayObjectIndexOf(b,e.file,"file") > -1;
     });
 }
-
+function tg_reset(){
+  criteria = {"currentSearch":[]};
+}
 function tg_delCriteria(myCrit){
   /* This function remove a criterion from the Criteria variable.
   Inputs:
   * myCrit = {"category":xxx, "value":xxx}
   */
+  
+  
 	myIndex = criteria.indexOf(myCrit);
   criteria.splice(myIndex,1);
 }
@@ -39,7 +59,27 @@ function tg_addCriteria(myCrit){
   Inputs:
   * myCrit = {"category":xxx, "value":xxx}
   */
-  criteria.push(myCrit)
+  // Search if the category exists
+  var cat;
+  var categoryIsPresent=false;
+  for (cat=0; cat<criteria.currentSearch.length; cat++){
+    if(criteria.currentSearch[cat].category == myCrit.category){
+      // If the category is found, add the value
+      criteria.currentSearch[cat].values.push(myCrit.value)
+      categoryIsPresent=true
+    }
+  }
+  
+  // If the category is not found, ad it with the value
+  if (categoryIsPresent==false){
+    criteria.currentSearch.push({
+      "category":myCrit.category,
+      "values":[myCrit.value],
+      "boolOp":"AND"
+    });
+  }
+  
+//  criteria.push(myCrit)
 }
 
 function tg_getTags(photosDatabase, tagFamily){
@@ -79,7 +119,7 @@ function tg_getPhotos(photosDatabase,criteria){
   */
   var i;
   var selectedPhotos=[]
-  if (criteria.length == 0){
+  if (criteria.currentSearch.length == 0){
     for (i=0; i<photosDatabase.Images_data.length; i++){
       selectedPhotos.push({"file":photosDatabase.Images_data[i].file});
     }
@@ -87,12 +127,13 @@ function tg_getPhotos(photosDatabase,criteria){
   }
   var first=true;
 
-  for (crit=0; crit<criteria.length; crit++){
+  for (crit=0; crit<criteria.currentSearch.length; crit++){
     // for each given criteria, find corresponding photos
     var photoForThisCriteria=[];
     for(i=0; i<photosDatabase.Relations.length; i++){
-      if(photosDatabase.Relations[i].category == criteria[crit].category &&
-         photosDatabase.Relations[i].value == criteria[crit].value){
+      // TODO : loop also on values
+      if(photosDatabase.Relations[i].category == criteria.currentSearch[crit].category &&
+         photosDatabase.Relations[i].value == criteria.currentSearch[crit].value){
         
         photoForThisCriteria.push({"file":photosDatabase.Relations[i].file});
       }
