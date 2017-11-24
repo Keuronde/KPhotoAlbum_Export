@@ -25,6 +25,23 @@ function intersect_photos(a, b) {
     });
 }
 
+function tg_delCriteria(myCrit){
+  /* This function remove a criterion from the Criteria variable.
+  Inputs:
+  * myCrit = {"category":xxx, "value":xxx}
+  */
+	myIndex = criteria.indexOf(myCrit);
+  criteria.splice(myIndex,1);
+}
+
+function tg_addCriteria(myCrit){
+  /* This function add a criterion from the Criteria variable.
+  Inputs:
+  * myCrit = {"category":xxx, "value":xxx}
+  */
+  criteria.push(myCrit)
+}
+
 function tg_getTags(photosDatabase, tagFamily){
   /* This function return a list of tags
   Inputs:

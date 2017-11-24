@@ -1,5 +1,6 @@
 <html>
 <head>
+<meta charset="UTF-8"> 
 <title>Test de la bibliotheque Mustache.js</title>
 <script src="./mustache.js"></script>
 <script src="./photos.js" charset="UTF-8"></script>
@@ -57,15 +58,12 @@
 
 
 function addCriteria(theButton){
-  console.log(theButton.getAttribute("category") + " " + theButton.getAttribute("value"));
-  criteria.push({"category":theButton.getAttribute("category"),"value":theButton.getAttribute("value")})
+  tg_addCriteria({"category":theButton.getAttribute("category"),"value":theButton.getAttribute("value")})
   refresh();
 }
 
 function delCriteria(theButton){
-  myCrit = {"category":theButton.getAttribute("category"),"value":theButton.getAttribute("value")}
-  myIndex = criteria.indexOf(myCrit);
-  criteria.splice(myIndex,1);
+  tg_delCriteria({"category":theButton.getAttribute("category"),"value":theButton.getAttribute("value")})
   refresh();
 }
 function reset()

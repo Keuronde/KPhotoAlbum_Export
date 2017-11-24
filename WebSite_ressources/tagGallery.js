@@ -1,5 +1,6 @@
 var criteria = [];
 
+
 // Function to get unique value in a array
 function unique(a) {
   return a.sort().filter(function(value, index, array) {
@@ -23,6 +24,23 @@ function intersect_photos(a, b) {
     return a.filter(function (e) {
         return arrayObjectIndexOf(b,e.file,"file") > -1;
     });
+}
+
+function tg_delCriteria(myCrit){
+  /* This function remove a criterion from the Criteria variable.
+  Inputs:
+  * myCrit = {"category":xxx, "value":xxx}
+  */
+	myIndex = criteria.indexOf(myCrit);
+  criteria.splice(myIndex,1);
+}
+
+function tg_addCriteria(myCrit){
+  /* This function add a criterion from the Criteria variable.
+  Inputs:
+  * myCrit = {"category":xxx, "value":xxx}
+  */
+  criteria.push(myCrit)
 }
 
 function tg_getTags(photosDatabase, tagFamily){
