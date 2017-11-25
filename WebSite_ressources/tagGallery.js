@@ -48,10 +48,28 @@ function tg_delCriteria(myCrit){
   Inputs:
   * myCrit = {"category":xxx, "value":xxx}
   */
+  var cat;
+  var val;
+  var found=false;
+  for (cat=0; cat<criteria.currentSearch.length; cat++){
+    if(criteria.currentSearch[cat].category == myCrit.category){
+      // Category found
+      // If the category is found, remove the value
+     	myIndex = criteria.currentSearch[cat].values.indexOf(myCrit.value);
+   	  criteria.currentSearch[cat].values.splice(myIndex,1);
+     	  
+   	  // If there are no more values, remove the category
+   	  if(criteria.currentSearch[cat].values.length == 0){
+   	    criteria.currentSearch.splice(cat,1);
+   	  }
+   	  // No need to continue the for loop
+     	break;
+    }
+  }
   
   
-	myIndex = criteria.indexOf(myCrit);
-  criteria.splice(myIndex,1);
+
+
 }
 
 function tg_addCriteria(myCrit){
@@ -111,6 +129,8 @@ function tg_getTagFamilies(photosDatabase){
   return myTagFamilies;
 }
 
+
+
 function tg_getPhotos(photosDatabase,criteria){
   /* Return the list of photos corresponding to all given criteria
   Inputs:
@@ -118,7 +138,11 @@ function tg_getPhotos(photosDatabase,criteria){
   * criteria: array of contidions like this [{"category":"cat1","value":"val1"}, {"category":"cat2","value":"val2"}]
   */
   var i;
+  var cat;
+  var val;
   var selectedPhotos=[]
+  
+  
   if (criteria.currentSearch.length == 0){
     for (i=0; i<photosDatabase.Images_data.length; i++){
       selectedPhotos.push({"file":photosDatabase.Images_data[i].file});
@@ -127,27 +151,55 @@ function tg_getPhotos(photosDatabase,criteria){
   }
   var first=true;
 
-  for (crit=0; crit<criteria.currentSearch.length; crit++){
-    // for each given criteria, find corresponding photos
-    var photoForThisCriteria=[];
-    for(i=0; i<photosDatabase.Relations.length; i++){
-      // TODO : loop also on values
-      if(photosDatabase.Relations[i].category == criteria.currentSearch[crit].category &&
-         photosDatabase.Relations[i].value == criteria.currentSearch[crit].value){
-        
-        photoForThisCriteria.push({"file":photosDatabase.Relations[i].file});
-      }
+  for (cat=0; cat<criteria.currentSearch.length; cat++){
+    // for each given categories, find corresponding photos
+    var photosForThisCategory=[];
+    var firstValue=true;
+    for(val=0; val<criteria.currentSearch[cat].values.length; val++){
+      var photosForThisValue=[];
       
-    }
+      for(i=0; i<photosDatabase.Relations.length; i++){
+        
+        if(photosDatabase.Relations[i].category == criteria.currentSearch[cat].category &&
+           photosDatabase.Relations[i].value == criteria.currentSearch[cat].values[val]){
+          
+          photosForThisValue.push({"file":photosDatabase.Relations[i].file});
+          console.log(photosDatabase.Relations[i].file)
+        }
+      } // FOR Relations
+      console.log(photosForThisValue);
+      
+      if(criteria.currentSearch[cat].boolOp == "AND"){
+        // AND logic
+
+        if(firstValue == true){
+          photosForThisCategory = photosForThisValue;
+          firstValue = false;
+        }else{
+          photosForThisCategory = intersect_photos(photosForThisCategory, photosForThisValue);
+        }
+      }else{
+        console.log("OR");
+        // OR logic
+        if(firstValue == true){
+          photosForThisCategory = photosForThisValue;
+          firstValue = false;
+        }else{
+          photosForThisCategory = unique(photosForThisCategory.concat(photosForThisValue));
+        }
+      }
+
+    } // FOR values
+
 
     // then get the intersection of each result
     if (first == true){
-      selectedPhotos = photoForThisCriteria;
+      selectedPhotos = photosForThisCategory;
       first=false;
     }else{
-      selectedPhotos = intersect_photos(selectedPhotos, photoForThisCriteria);
+      selectedPhotos = intersect_photos(selectedPhotos, photosForThisCategory);
     }
     
-  }
+  } // FOR Category
   return selectedPhotos;
 }
