@@ -23,6 +23,18 @@ function unique(a) {
   });
 }
 
+function uniqueObjectInArray(myArray, property) {
+  for(var i = 0; i < myArray.length; i++) {
+    for(var j = i+1; j < myArray.length; j++) {
+      if (myArray[i][property] === myArray[j][property]){
+        myArray.splice(j,1);
+        console.log(myArray[i][property]);
+      }
+    }
+  }
+  return myArray;
+}
+
 function arrayObjectIndexOf(myArray, searchTerm, property) {
     for(var i = 0, len = myArray.length; i < len; i++) {
         if (myArray[i][property] === searchTerm) {
@@ -42,6 +54,29 @@ function intersect_photos(a, b) {
 }
 function tg_reset(){
   criteria = {"currentSearch":[]};
+}
+
+function tg_toggleBoolOp(myBoolOp){
+  /* This function change the boolean operation that shoul be done on criteria of one category.
+  Inputs:
+  * myBoolOp = {"category":xxx, "boolOp":"AND" or "OR"}
+  */
+  
+  var newBoolOp, cat;
+  // Define new boolean operation
+  if(myBoolOp.boolOp == "AND"){
+    newBoolOp = "OR"
+  }else{
+    newBoolOp = "AND"
+  }
+  
+  // Find category and apply
+  for (cat=0; cat<criteria.currentSearch.length; cat++){
+    if(criteria.currentSearch[cat].category == myBoolOp.category){
+      criteria.currentSearch[cat].boolOp = newBoolOp;
+    }
+  }
+  
 }
 function tg_delCriteria(myCrit){
   /* This function remove a criterion from the Criteria variable.
@@ -164,10 +199,8 @@ function tg_getPhotos(photosDatabase,criteria){
            photosDatabase.Relations[i].value == criteria.currentSearch[cat].values[val]){
           
           photosForThisValue.push({"file":photosDatabase.Relations[i].file});
-          console.log(photosDatabase.Relations[i].file)
         }
       } // FOR Relations
-      console.log(photosForThisValue);
       
       if(criteria.currentSearch[cat].boolOp == "AND"){
         // AND logic
@@ -185,7 +218,7 @@ function tg_getPhotos(photosDatabase,criteria){
           photosForThisCategory = photosForThisValue;
           firstValue = false;
         }else{
-          photosForThisCategory = unique(photosForThisCategory.concat(photosForThisValue));
+          photosForThisCategory = uniqueObjectInArray(photosForThisCategory.concat(photosForThisValue),"file");
         }
       }
 

@@ -16,12 +16,16 @@
     <p style="display:inline-block;">Recherche :</p>
     <!-- BEGIN recherche -->
 	{{#currentSearch}}
+    <div>
+    <p style="display:inline-block;">{{category}}</p>
+    <button type="button" category="{{category}}" boolOp="{{boolOp}}" onclick="toggleBoolOp(this)">{{boolOp}}</button>
     {{#values}}
     <button type="button" category="{{category}}" value="{{.}}" onclick="delCriteria(this)">{{category}} : <span style="value">{{.}}</button>
     {{/values}}
+    </div>
 	{{/currentSearch}}
     <!-- END recherche -->
-    <button style:"float:left" onclick="reset()">
+    <button style:"float:left" onclick="reset()">Reset</button>
 </script>
 <script id="tags_tpl" type="x-tmpl-mustache">
   <ul>
@@ -60,12 +64,16 @@
 
 
 function addCriteria(theButton){
-  tg_addCriteria({"category":theButton.getAttribute("category"),"value":theButton.getAttribute("value")})
+  tg_addCriteria({"category":theButton.getAttribute("category"),"value":theButton.getAttribute("value")});
   refresh();
 }
 
 function delCriteria(theButton){
-  tg_delCriteria({"category":theButton.getAttribute("category"),"value":theButton.getAttribute("value")})
+  tg_delCriteria({"category":theButton.getAttribute("category"),"value":theButton.getAttribute("value")});
+  refresh();
+}
+function toggleBoolOp(theButton){
+  tg_toggleBoolOp({"category":theButton.getAttribute("category"),"boolOp":theButton.getAttribute("boolOp")});
   refresh();
 }
 function reset()
@@ -79,18 +87,20 @@ function computeCategory()
 {
   var CategoryAndValue={"categories":[]};
   var Category= tg_getTagFamilies(photosDatabase);
-  var i,j,k;
+  var i,cat,k,val;
   for (i=0; i<Category.length; i++){
     familyTags_ref = tg_getTags(photosDatabase, Category[i])
     familyTags=[];
     for (k=0; k<familyTags_ref.length; k++){
       // do not display the value already selected
       var toAdd=true;
-      for (j=0; j<criteria.currentSearch.length; j++){
+      for (cat=0; cat<criteria.currentSearch.length; cat++){
         // TODO : loop on the criteria.currentSearch[j].value[0]
-        // TODO : make a function tg_isInCriteria({categori, value})
-        if((Category[i] == criteria.currentSearch[j].category) && (familyTags_ref[k] == criteria.currentSearch[j].values[0])){
-          toAdd=false;
+        // TODO : make a function tg_isInCriteria({category, value})
+        for (val=0; val<criteria.currentSearch[cat].values.length; val++){
+          if((Category[i] == criteria.currentSearch[cat].category) && (familyTags_ref[k] == criteria.currentSearch[cat].values[val])){
+            toAdd=false;
+          }
         }
       }
       if(toAdd == true){      
