@@ -87,3 +87,8 @@ div.valeursVisibles ul {
   text-align:center;
   margin-left:200px;
 }
+
+#hideSearch{
+  position: absolute;
+  right: 0px;
+}

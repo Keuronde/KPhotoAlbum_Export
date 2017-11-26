@@ -78,6 +78,21 @@ function tg_toggleBoolOp(myBoolOp){
   }
   
 }
+
+function tg_getCriteriaToRenderSearchPanel(){
+  rendercriteria = criteria;
+  
+  for(var cat=0; cat < rendercriteria.currentSearch.length; cat++){
+    if(rendercriteria.currentSearch[cat].values.length > 1){
+      rendercriteria.currentSearch[cat].onlyone=false;
+    }else{
+      rendercriteria.currentSearch[cat].onlyone=true;
+    }
+  }
+  return rendercriteria;
+}
+
+
 function tg_delCriteria(myCrit){
   /* This function remove a criterion from the Criteria variable.
   Inputs:

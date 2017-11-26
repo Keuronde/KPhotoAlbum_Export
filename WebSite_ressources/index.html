@@ -14,18 +14,22 @@
 
 <script id="search_tpl" type="x-tmpl-mustache">
     <p style="display:inline-block;">Recherche :</p>
+    <button style:"float:right" onclick="hideSearch()" id="hideSearch">Hide search</button>
+    <div id="hidableSearch">
     <!-- BEGIN recherche -->
 	{{#currentSearch}}
     <div>
     <p style="display:inline-block;">{{category}}</p>
+    {{^onlyone}}
     <button type="button" category="{{category}}" boolOp="{{boolOp}}" onclick="toggleBoolOp(this)">{{boolOp}}</button>
+    {{/onlyone}}
     {{#values}}
     <button type="button" category="{{category}}" value="{{.}}" onclick="delCriteria(this)">{{category}} : <span style="value">{{.}}</button>
     {{/values}}
     </div>
 	{{/currentSearch}}
     <!-- END recherche -->
-    <button style:"float:left" onclick="reset()">Reset</button>
+    <button style:"float:left" onclick="reset()">Reset</button></div>
 </script>
 <script id="tags_tpl" type="x-tmpl-mustache">
   <ul>
@@ -75,6 +79,15 @@ function delCriteria(theButton){
 function toggleBoolOp(theButton){
   tg_toggleBoolOp({"category":theButton.getAttribute("category"),"boolOp":theButton.getAttribute("boolOp")});
   refresh();
+}
+function hideSearch(){
+  if (document.getElementById('hidableSearch').style["display"]=="none"){
+    document.getElementById('hidableSearch').style["display"]="block";
+    document.getElementById('hideSearch').innerHTML = "Hide search"
+  }else{
+    document.getElementById('hidableSearch').style["display"]="none";
+    document.getElementById('hideSearch').innerHTML = "Display search"
+  }
 }
 function reset()
 {
@@ -127,7 +140,7 @@ function refresh(){
     //Parse it (optional, only necessary if template is to be used again)
     Mustache.parse(template);
     //Render the data into the template
-    var rendered = Mustache.render(template, criteria);
+    var rendered = Mustache.render(template, tg_getCriteriaToRenderSearchPanel());
     //Overwrite the contents of #target with the rendered HTML
     document.getElementById('search').innerHTML = rendered;
   }else{
