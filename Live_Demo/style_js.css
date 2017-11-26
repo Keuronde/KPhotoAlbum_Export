@@ -16,30 +16,23 @@ a:hover {
 #tags{
   clear:left;
   width:200px;
-  height:100%;
   color:#FFF;
   float:left;
 }
 #tags ul{
- list-style-type:none;
- margin-left:0px;
- padding-left:0px;
+  list-style-type:none;
+  margin-left:0px;
+  padding-left:0px;
 }
 
-
-div.valeursVisibles li {
-  font-weight:bold;
-}
-div.valeursVisibles ul li {
-  font-weight:normal;
-}
-div.valeursVisibles ul {
-  display:block;
+#tags ul li ul li{
+  margin-top:2px;
 }
 
-#photos{
-  margin-left:200px;
+#tags ul li{
+  margin-top:15px;
 }
+
 #photos a {
   display:inline-block;
   margin:5px;
@@ -57,6 +50,10 @@ div.valeursVisibles ul {
   border-bottom:1px #CCC solid;
   background-color:#EEE;
   color:black;
+}
+
+.currentSearchButton{
+  width:100%;
 }
 
 #search button{
