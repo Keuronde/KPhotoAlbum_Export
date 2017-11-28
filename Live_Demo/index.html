@@ -1,7 +1,7 @@
 <html>
 <head>
 <meta charset="UTF-8"> 
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width">
 <title>Test de la bibliotheque Mustache.js</title>
 <script src="./mustache.js"></script>
 <script src="./photos.js" charset="UTF-8"></script>
@@ -56,15 +56,13 @@
       <a href="Photos/{{file}}" rel="lightbox[photos]"><img src="Photos/mini/{{file}}"/></a>
       <!-- END photos -->
     {{/selectedPhotos}}
+    <button type="button" onclick="more()">more...</button>
     </div>
 </script>
-<script>
-  nbPhotoPerPage = 20;
-  
-</script>
 
 
 <script>
+var myPhotos;
 
 
 function addCriteria(theButton){
@@ -89,6 +87,11 @@ function hideSearch(){
     document.getElementById('hideSearch').innerHTML = "Display search"
   }
 }
+function more(){
+    tg_getMorePhotos();
+	refresh();
+}
+
 function reset()
 {
   tg_reset();
@@ -129,9 +132,10 @@ function computeCategory()
 
 function refresh(){
   var CategoryAndValue = computeCategory();
-  selectedPhotos = tg_getPhotos(photosDatabase,criteria)
+  var selectedPhotos = tg_getPhotos(photosDatabase);
 
   // Current search
+
   //Grab the inline template
   // TODO : make a function tg_criteriaIsEmpty
   if(criteria.currentSearch.length > 0){
