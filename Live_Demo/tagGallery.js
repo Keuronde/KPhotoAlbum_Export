@@ -33,7 +33,6 @@ function uniqueObjectInArray(myArray, property) {
     for(var j = i+1; j < myArray.length; j++) {
       if (myArray[i][property] === myArray[j][property]){
         myArray.splice(j,1);
-        console.log(myArray[i][property]);
       }
     }
   }
@@ -232,7 +231,6 @@ function computePhotos(photosDatabase){
 		        photosForThisCategory = intersect_photos(photosForThisCategory, photosForThisValue);
 		      }
 		    }else{
-		      console.log("OR");
 		      // OR logic
 		      if(firstValue == true){
 		        photosForThisCategory = photosForThisValue;
@@ -266,12 +264,14 @@ function tg_getPhotos(photosDatabase){
   * photosDatabase: database
   * criteria: array of contidions like this [{"category":"cat1","value":"val1"}, {"category":"cat2","value":"val2"}]
   */
-  
   if(photosUptoDate == false){
 	  photosUptoDate = true;
+	  console.log(nbPhotosToDisplay);
 	  selectedPhotos = computePhotos(photosDatabase);
 	  // Reset the number of displayed photos
 	  nbPhotosToDisplay=nbMorePhotos;
+	  
+	  
   }
   selectedPhotosForPage = selectedPhotos.slice(0,nbPhotosToDisplay);
 	return selectedPhotosForPage;
