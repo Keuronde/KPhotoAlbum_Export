@@ -40,7 +40,9 @@ var photos_tpl = `
       <a href="Photos/{{file}}" rel="lightbox[photos]"><img src="Photos/mini/{{file}}"/></a>
       <!-- END photos -->
     {{/selectedPhotos}}
+    {{#more}}
     <button type="button" onclick="more()">more...</button>
+    {{/more}}
     </div>
 `;
 
@@ -131,10 +133,15 @@ function refresh(){
   var selectedPhotos = tg_getPhotos(photosDatabase);
 
   
+  
+  if(!tg_AreAllPhotosDisplayed()){
+    if(  window.onscroll === null){
+      	window.onscroll = function() {myScroll()};
+    }
+  }else{
+    window.onscroll = null;
+  }
   // Current search
-//  if(  window.onscroll === null){
-//  	window.onscroll = function() {myScroll()};
-//  }
   //Grab the inline template
   // TODO : make a function tg_criteriaIsEmpty
   if(criteria.currentSearch.length > 0){
@@ -160,9 +167,11 @@ function refresh(){
   //Parse it (optional, only necessary if template is to be used again)
   Mustache.parse(photos_tpl);
   //Render the data into the template
-  var rendered = Mustache.render(photos_tpl, {"selectedPhotos":selectedPhotos});
+  var rendered = Mustache.render(photos_tpl, {"selectedPhotos":selectedPhotos, "more":!tg_AreAllPhotosDisplayed()});
   //Overwrite the contents of #target with the rendered HTML
   document.getElementById('photos').innerHTML = rendered;
+
+  
 }
 
 

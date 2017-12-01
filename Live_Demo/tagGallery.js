@@ -102,6 +102,11 @@ function tg_getMorePhotos(){
 	nbPhotosToDisplay= nbPhotosToDisplay + nbMorePhotos;
 }
 
+function tg_AreAllPhotosDisplayed(){
+	console.log("nbPhotosToDisplay : " + nbPhotosToDisplay + ", selectedPhotos.length : " + selectedPhotos.length);
+	return (nbPhotosToDisplay >= selectedPhotos.length);
+}
+
 
 function tg_delCriteria(myCrit){
   /* This function remove a criterion from the Criteria variable.
