@@ -1,4 +1,9 @@
 var criteria = {"currentSearch":[]};
+var selectedPhotos=[];
+var photosUptoDate = false;
+var nbMorePhotos=20;
+var nbPhotosToDisplay=nbMorePhotos;
+
 /* Should look like this
 "currentSearch":
   [
@@ -28,7 +33,6 @@ function uniqueObjectInArray(myArray, property) {
     for(var j = i+1; j < myArray.length; j++) {
       if (myArray[i][property] === myArray[j][property]){
         myArray.splice(j,1);
-        console.log(myArray[i][property]);
       }
     }
   }
@@ -54,6 +58,7 @@ function intersect_photos(a, b) {
 }
 function tg_reset(){
   criteria = {"currentSearch":[]};
+  nbPhotosToDisplay=nbMorePhotos;
 }
 
 function tg_toggleBoolOp(myBoolOp){
@@ -76,6 +81,7 @@ function tg_toggleBoolOp(myBoolOp){
       criteria.currentSearch[cat].boolOp = newBoolOp;
     }
   }
+  photosUptoDate = false;
   
 }
 
@@ -90,6 +96,15 @@ function tg_getCriteriaToRenderSearchPanel(){
     }
   }
   return rendercriteria;
+}
+
+function tg_getMorePhotos(){
+	nbPhotosToDisplay= nbPhotosToDisplay + nbMorePhotos;
+}
+
+function tg_AreAllPhotosDisplayed(){
+	console.log("nbPhotosToDisplay : " + nbPhotosToDisplay + ", selectedPhotos.length : " + selectedPhotos.length);
+	return (nbPhotosToDisplay >= selectedPhotos.length);
 }
 
 
@@ -116,10 +131,9 @@ function tg_delCriteria(myCrit){
      	break;
     }
   }
-  
-  
 
-
+  photosUptoDate = false;
+  
 }
 
 function tg_addCriteria(myCrit){
@@ -146,8 +160,9 @@ function tg_addCriteria(myCrit){
       "boolOp":"AND"
     });
   }
-  
-//  criteria.push(myCrit)
+
+  photosUptoDate = false;
+
 }
 
 function tg_getTags(photosDatabase, tagFamily){
@@ -179,75 +194,91 @@ function tg_getTagFamilies(photosDatabase){
   return myTagFamilies;
 }
 
+function computePhotos(photosDatabase){
+		var i;
+		var cat;
+		var val;
+	  selectedPhotos=[]
+
+		
+		
+		if (criteria.currentSearch.length == 0){
+		  for (i=0; i<photosDatabase.Images_data.length; i++){
+		    selectedPhotos.push({"file":photosDatabase.Images_data[i].file});
+		  }
+		  return selectedPhotos;
+		}
+		var first=true;
+
+		for (cat=0; cat<criteria.currentSearch.length; cat++){
+		  // for each given categories, find corresponding photos
+		  var photosForThisCategory=[];
+		  var firstValue=true;
+		  for(val=0; val<criteria.currentSearch[cat].values.length; val++){
+		    var photosForThisValue=[];
+		    
+		    for(i=0; i<photosDatabase.Relations.length; i++){
+		      
+		      if(photosDatabase.Relations[i].category == criteria.currentSearch[cat].category &&
+		         photosDatabase.Relations[i].value == criteria.currentSearch[cat].values[val]){
+		        
+		        photosForThisValue.push({"file":photosDatabase.Relations[i].file});
+		      }
+		    } // FOR Relations
+		    
+		    if(criteria.currentSearch[cat].boolOp == "AND"){
+		      // AND logic
+
+		      if(firstValue == true){
+		        photosForThisCategory = photosForThisValue;
+		        firstValue = false;
+		      }else{
+		        photosForThisCategory = intersect_photos(photosForThisCategory, photosForThisValue);
+		      }
+		    }else{
+		      // OR logic
+		      if(firstValue == true){
+		        photosForThisCategory = photosForThisValue;
+		        firstValue = false;
+		      }else{
+		        photosForThisCategory = uniqueObjectInArray(photosForThisCategory.concat(photosForThisValue),"file");
+		      }
+		    }
+
+		  } // FOR values
 
 
-function tg_getPhotos(photosDatabase,criteria){
+		  // then get the intersection of each result
+		  if (first == true){
+		    selectedPhotos = photosForThisCategory;
+		    first=false;
+		  }else{
+		    selectedPhotos = intersect_photos(selectedPhotos, photosForThisCategory);
+		  }
+		  
+		} // FOR Category
+		
+		return selectedPhotos;
+}
+
+
+
+function tg_getPhotos(photosDatabase){
   /* Return the list of photos corresponding to all given criteria
   Inputs:
   * photosDatabase: database
   * criteria: array of contidions like this [{"category":"cat1","value":"val1"}, {"category":"cat2","value":"val2"}]
   */
-  var i;
-  var cat;
-  var val;
-  var selectedPhotos=[]
-  
-  
-  if (criteria.currentSearch.length == 0){
-    for (i=0; i<photosDatabase.Images_data.length; i++){
-      selectedPhotos.push({"file":photosDatabase.Images_data[i].file});
-    }
-    return selectedPhotos;
+  if(photosUptoDate == false){
+	  photosUptoDate = true;
+	  console.log(nbPhotosToDisplay);
+	  selectedPhotos = computePhotos(photosDatabase);
+	  // Reset the number of displayed photos
+	  nbPhotosToDisplay=nbMorePhotos;
+	  
+	  
   }
-  var first=true;
+  selectedPhotosForPage = selectedPhotos.slice(0,nbPhotosToDisplay);
+	return selectedPhotosForPage;
 
-  for (cat=0; cat<criteria.currentSearch.length; cat++){
-    // for each given categories, find corresponding photos
-    var photosForThisCategory=[];
-    var firstValue=true;
-    for(val=0; val<criteria.currentSearch[cat].values.length; val++){
-      var photosForThisValue=[];
-      
-      for(i=0; i<photosDatabase.Relations.length; i++){
-        
-        if(photosDatabase.Relations[i].category == criteria.currentSearch[cat].category &&
-           photosDatabase.Relations[i].value == criteria.currentSearch[cat].values[val]){
-          
-          photosForThisValue.push({"file":photosDatabase.Relations[i].file});
-        }
-      } // FOR Relations
-      
-      if(criteria.currentSearch[cat].boolOp == "AND"){
-        // AND logic
-
-        if(firstValue == true){
-          photosForThisCategory = photosForThisValue;
-          firstValue = false;
-        }else{
-          photosForThisCategory = intersect_photos(photosForThisCategory, photosForThisValue);
-        }
-      }else{
-        console.log("OR");
-        // OR logic
-        if(firstValue == true){
-          photosForThisCategory = photosForThisValue;
-          firstValue = false;
-        }else{
-          photosForThisCategory = uniqueObjectInArray(photosForThisCategory.concat(photosForThisValue),"file");
-        }
-      }
-
-    } // FOR values
-
-
-    // then get the intersection of each result
-    if (first == true){
-      selectedPhotos = photosForThisCategory;
-      first=false;
-    }else{
-      selectedPhotos = intersect_photos(selectedPhotos, photosForThisCategory);
-    }
-    
-  } // FOR Category
-  return selectedPhotos;
 }
