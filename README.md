@@ -19,11 +19,19 @@ Here are the step to produce the export.
 I have put here a [live demo](http://poivron-robotique.fr/Demo_KPA_export/)
 
 ## Based on
-This project is using Mustache.js under 
+This project is using (Mustache.js)[https://mustache.github.io/] under 
 The MIT License
 
 Copyright (c) 2009 Chris Wanstrath (Ruby)
 Copyright (c) 2010-2014 Jan Lehnardt (JavaScript)
 Copyright (c) 2010-2015 The mustache.js community
+
+This project is using Lightbox2 under 
+The MIT License
+
+by [Lokesh Dhakar](http://www.lokeshdhakar.com)
+
+This project is using [JQuery](https://jquery.com/) under the MIT License
+
 
 
