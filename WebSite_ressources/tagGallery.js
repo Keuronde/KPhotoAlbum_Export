@@ -59,6 +59,7 @@ function intersect_photos(a, b) {
 function tg_reset(){
   criteria = {"currentSearch":[]};
   nbPhotosToDisplay=nbMorePhotos;
+  photosUptoDate = false;
 }
 
 function tg_toggleBoolOp(myBoolOp){
